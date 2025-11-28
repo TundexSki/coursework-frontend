@@ -3,13 +3,12 @@
     <div class="container">
       <div class="header-content">
         <router-link to="/" class="logo">
-          <h1>AfterSchool Hub</h1>
+          <h1>Lessons Hub</h1>
         </router-link>
         
         <nav class="main-nav">
           <router-link to="/" class="nav-link">Home</router-link>
-          <router-link to="/classes" class="nav-link">Classes</router-link>
-          <router-link to="/dashboard" class="nav-link" v-if="isLoggedIn">Dashboard</router-link>
+          <router-link to="/lessons" class="nav-link">Lessons</router-link>
         </nav>
         
         <div class="header-actions">
@@ -17,16 +16,6 @@
             <span class="cart-icon">🛒</span>
             <span class="cart-count" v-if="cartCount > 0">{{ cartCount }}</span>
           </router-link>
-          
-          <div class="auth-buttons" v-if="!isLoggedIn">
-            <router-link to="/login" class="btn btn-outline">Login</router-link>
-            <router-link to="/register" class="btn btn-primary">Register</router-link>
-          </div>
-          
-          <div class="user-menu" v-else>
-            <span class="user-name">Welcome, {{ userName }}</span>
-            <button @click="logout" class="btn btn-outline">Logout</button>
-          </div>
         </div>
       </div>
     </div>
@@ -39,9 +28,7 @@ import { useStore } from '../stores/store'
 
 const store = useStore()
 
-const isLoggedIn = computed(() => store.isLoggedIn)
-const userName = computed(() => store.user?.name || 'User')
-const cartCount = computed(() => store.cart.length)
+const cartCount = computed(() => store.getCartCount())
 </script>
 
 <style scoped>
