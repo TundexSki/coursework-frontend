@@ -1,23 +1,26 @@
-# after-school-cw
+# After-School Lessons Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+Vue 3 + Vite frontend for the CST3144 After-School Lessons coursework project.
 
-## Recommended IDE Setup
+## Links
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **Live App**: https://TundexSki.github.io/coursework-frontend/
+- **Backend API**: https://tundeh-backend.onrender.com
+- **Backend Repo**: https://github.com/TundexSki/express-coursework
 
-## Recommended Browser Setup
+## Features
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+- Browse after-school lessons with search and sorting
+- Add lessons to cart with space availability tracking
+- Checkout with name/phone validation
+- Responsive design for mobile and desktop
 
-## Customize configuration
+## Tech Stack
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+- **Vue 3** with Composition API
+- **Vue Router** for navigation
+- **Vite** for build tooling
+- **Fetch API** for backend communication
 
 ## Project Setup
 
@@ -25,14 +28,28 @@ See [Vite Configuration Reference](https://vite.dev/config/).
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### Development
 
 ```sh
 npm run dev
 ```
 
-### Compile and Minify for Production
+### Production Build
 
 ```sh
 npm run build
 ```
+
+### Deploy to GitHub Pages
+
+```sh
+npm run build
+# Push the dist folder to gh-pages branch
+```
+
+## API Endpoints Used
+
+- `GET /lessons` - Fetch all lessons
+- `GET /search?q=` - Search lessons
+- `POST /orders` - Create order
+- `PUT /lessons/:id` - Update lesson spaces
