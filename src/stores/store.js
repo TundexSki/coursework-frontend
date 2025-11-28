@@ -1,188 +1,183 @@
-import { reactive } from 'vue'
+import { reactive, readonly } from 'vue'
 
-// Sample data for classes
-const sampleClasses = [
-  {
-    id: 1,
-    title: "Robotics & Coding",
-    instructor: "Dr. Sarah Johnson",
-    category: "STEM",
-    ageGroup: "8-12",
-    duration: "8 weeks",
-    price: 149,
-    schedule: "Mondays & Wednesdays, 4:00-5:30 PM",
-    description: "Learn the fundamentals of robotics and programming through hands-on projects.",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500&h=300&fit=crop",
-    maxStudents: 15,
-    enrolled: 8
-  },
-  {
-    id: 2,
-    title: "Art & Creativity",
-    instructor: "Ms. Emily Chen",
-    category: "Arts",
-    ageGroup: "6-10",
-    duration: "6 weeks",
-    price: 119,
-    schedule: "Tuesdays & Thursdays, 3:30-5:00 PM",
-    description: "Explore various art techniques including painting, drawing, and sculpture.",
-    image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=500&h=300&fit=crop",
-    maxStudents: 12,
-    enrolled: 6
-  },
-  {
-    id: 3,
-    title: "Soccer Skills",
-    instructor: "Coach Mike Rodriguez",
-    category: "Sports",
-    ageGroup: "7-11",
-    duration: "10 weeks",
-    price: 139,
-    schedule: "Saturdays, 10:00-11:30 AM",
-    description: "Develop soccer skills, teamwork, and physical fitness in a fun environment.",
-    image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=500&h=300&fit=crop",
-    maxStudents: 20,
-    enrolled: 14
-  },
-  {
-    id: 4,
-    title: "Music & Piano",
-    instructor: "Prof. David Kim",
-    category: "Music",
-    ageGroup: "5-12",
-    duration: "12 weeks",
-    price: 199,
-    schedule: "Wednesdays & Fridays, 4:30-5:30 PM",
-    description: "Learn piano basics, music theory, and develop musical appreciation.",
-    image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=500&h=300&fit=crop",
-    maxStudents: 8,
-    enrolled: 5
-  },
-  {
-    id: 5,
-    title: "Chess Mastery",
-    instructor: "Grandmaster Lisa Wang",
-    category: "Strategy",
-    ageGroup: "8-14",
-    duration: "8 weeks",
-    price: 99,
-    schedule: "Sundays, 2:00-3:30 PM",
-    description: "Master chess strategies, tactics, and improve critical thinking skills.",
-    image: "https://images.unsplash.com/photo-1606092195730-5d7b9af1efc5?w=500&h=300&fit=crop",
-    maxStudents: 16,
-    enrolled: 10
-  },
-  {
-    id: 6,
-    title: "Dance & Movement",
-    instructor: "Ms. Jessica Martinez",
-    category: "Dance",
-    ageGroup: "6-12",
-    duration: "6 weeks",
-    price: 129,
-    schedule: "Mondays & Wednesdays, 5:00-6:00 PM",
-    description: "Learn various dance styles including ballet, jazz, and contemporary.",
-    image: "https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=500&h=300&fit=crop",
-    maxStudents: 15,
-    enrolled: 9
-  }
-]
+const API_URL = import.meta.env.VITE_API_URL || 'https://tundeh-backend.onrender.com'
 
 const state = reactive({
-  user: null,
-  isLoggedIn: false,
+  lessons: [],
   cart: [],
-  classes: sampleClasses,
-  enrollments: []
+  loading: false,
+  error: null
 })
 
 export function useStore() {
-  const login = (userData) => {
-    state.user = userData
-    state.isLoggedIn = true
-    localStorage.setItem('user', JSON.stringify(userData))
+  // Fetch all lessons from the API
+  const fetchLessons = async () => {
+    state.loading = true
+    state.error = null
+    try {
+      const response = await fetch(`${API_URL}/lessons`)
+      if (!response.ok) throw new Error('Failed to fetch lessons')
+      state.lessons = await response.json()
+    } catch (err) {
+      state.error = err.message
+      console.error('Failed to fetch lessons:', err)
+    } finally {
+      state.loading = false
+    }
   }
 
-  const logout = () => {
-    state.user = null
-    state.isLoggedIn = false
-    state.cart = []
-    localStorage.removeItem('user')
+  // Search lessons
+  const searchLessons = async (query) => {
+    state.loading = true
+    state.error = null
+    try {
+      const response = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`)
+      if (!response.ok) throw new Error('Search failed')
+      state.lessons = await response.json()
+    } catch (err) {
+      state.error = err.message
+      console.error('Search failed:', err)
+    } finally {
+      state.loading = false
+    }
   }
 
-  const addToCart = (classItem) => {
-    const existingItem = state.cart.find(item => item.id === classItem.id)
+  // Get lesson by ID
+  const getLessonById = (id) => {
+    return state.lessons.find(l => l.id === Number(id))
+  }
+
+  // Add lesson to cart
+  const addToCart = (lesson) => {
+    if (lesson.spaces <= 0) return
+
+    const existingItem = state.cart.find(item => item.id === lesson.id)
     if (existingItem) {
       existingItem.quantity += 1
     } else {
-      state.cart.push({ ...classItem, quantity: 1 })
+      state.cart.push({ ...lesson, quantity: 1 })
+    }
+
+    // Decrease local spaces count
+    const storeLesson = state.lessons.find(l => l.id === lesson.id)
+    if (storeLesson) {
+      storeLesson.spaces -= 1
     }
   }
 
-  const removeFromCart = (classId) => {
-    state.cart = state.cart.filter(item => item.id !== classId)
-  }
-
-  const updateCartQuantity = (classId, quantity) => {
-    const item = state.cart.find(item => item.id === classId)
-    if (item) {
-      if (quantity <= 0) {
-        removeFromCart(classId)
-      } else {
-        item.quantity = quantity
+  // Remove lesson from cart
+  const removeFromCart = (lessonId) => {
+    const cartItem = state.cart.find(item => item.id === lessonId)
+    if (cartItem) {
+      // Restore spaces to the lesson
+      const storeLesson = state.lessons.find(l => l.id === lessonId)
+      if (storeLesson) {
+        storeLesson.spaces += cartItem.quantity
       }
+      state.cart = state.cart.filter(item => item.id !== lessonId)
     }
   }
 
-  const enrollInClass = (classId) => {
-    const classItem = state.classes.find(c => c.id === classId)
-    if (classItem && !state.enrollments.find(e => e.classId === classId)) {
-      state.enrollments.push({
-        id: Date.now(),
-        classId: classId,
-        className: classItem.title,
-        enrolledAt: new Date().toISOString(),
-        status: 'active'
-      })
-      classItem.enrolled += 1
+  // Update cart quantity
+  const updateCartQuantity = (lessonId, newQuantity) => {
+    const cartItem = state.cart.find(item => item.id === lessonId)
+    const storeLesson = state.lessons.find(l => l.id === lessonId)
+
+    if (!cartItem || !storeLesson) return
+
+    const difference = newQuantity - cartItem.quantity
+
+    if (newQuantity <= 0) {
+      removeFromCart(lessonId)
+    } else if (difference > 0 && storeLesson.spaces >= difference) {
+      cartItem.quantity = newQuantity
+      storeLesson.spaces -= difference
+    } else if (difference < 0) {
+      cartItem.quantity = newQuantity
+      storeLesson.spaces -= difference
     }
   }
 
-  const getClassById = (id) => {
-    return state.classes.find(c => c.id === parseInt(id))
-  }
-
+  // Get cart total price
   const getCartTotal = () => {
     return state.cart.reduce((total, item) => total + (item.price * item.quantity), 0)
   }
 
-  // Initialize from localStorage
-  const savedUser = localStorage.getItem('user')
-  if (savedUser) {
+  // Get cart item count
+  const getCartCount = () => {
+    return state.cart.reduce((count, item) => count + item.quantity, 0)
+  }
+
+  // Place order
+  const placeOrder = async (orderData) => {
     try {
-      state.user = JSON.parse(savedUser)
-      state.isLoggedIn = true
-    } catch (e) {
-      localStorage.removeItem('user')
+      // Create order in backend
+      const orderResponse = await fetch(`${API_URL}/orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: orderData.name,
+          phone: orderData.phone,
+          items: state.cart.map(item => ({
+            lessonId: item.id,
+            spaces: item.quantity
+          }))
+        })
+      })
+
+      if (!orderResponse.ok) throw new Error('Failed to place order')
+
+      // Update lesson spaces in backend
+      for (const item of state.cart) {
+        const lesson = state.lessons.find(l => l.id === item.id)
+        if (lesson) {
+          await fetch(`${API_URL}/lessons/${item.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ spaces: lesson.spaces })
+          })
+        }
+      }
+
+      // Clear cart
+      state.cart = []
+      return { success: true }
+    } catch (err) {
+      console.error('Order failed:', err)
+      return { success: false, error: err.message }
     }
   }
 
+  // Clear cart
+  const clearCart = () => {
+    // Restore all spaces before clearing
+    for (const item of state.cart) {
+      const storeLesson = state.lessons.find(l => l.id === item.id)
+      if (storeLesson) {
+        storeLesson.spaces += item.quantity
+      }
+    }
+    state.cart = []
+  }
+
   return {
-    // State
-    user: state.user,
-    isLoggedIn: state.isLoggedIn,
-    cart: state.cart,
-    classes: state.classes,
-    enrollments: state.enrollments,
-    
+    // State (readonly to prevent direct mutation)
+    lessons: readonly(state.lessons),
+    cart: readonly(state.cart),
+    loading: readonly(state).loading,
+    error: readonly(state).error,
+    state,
+
     // Actions
-    login,
-    logout,
+    fetchLessons,
+    searchLessons,
+    getLessonById,
     addToCart,
     removeFromCart,
     updateCartQuantity,
-    enrollInClass,
-    getClassById,
-    getCartTotal
+    getCartTotal,
+    getCartCount,
+    placeOrder,
+    clearCart
   }
 }
