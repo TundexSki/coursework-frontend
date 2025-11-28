@@ -3,7 +3,7 @@
     <div class="container">
       <div class="page-header">
         <h1>Shopping Cart</h1>
-        <p v-if="cart.length > 0">Review your selected classes before checkout</p>
+        <p v-if="cart.length > 0">Review your selected lessons before checkout</p>
         <p v-else>Your cart is empty</p>
       </div>
 
@@ -15,38 +15,26 @@
             class="cart-item"
           >
             <div class="item-image">
-              <img :src="item.image" :alt="item.title" />
+              <img :src="getImageUrl(item.image)" :alt="item.subject" />
             </div>
             
             <div class="item-details">
-              <h3>{{ item.title }}</h3>
-              <p class="instructor">by {{ item.instructor }}</p>
-              <div class="item-meta">
-                <span class="category">{{ item.category }}</span>
-                <span class="age-group">Ages {{ item.ageGroup }}</span>
-                <span class="duration">{{ item.duration }}</span>
-              </div>
-              <p class="schedule">{{ item.schedule }}</p>
+              <h3>{{ item.subject }}</h3>
+              <p class="location">{{ item.location }}</p>
             </div>
 
             <div class="item-quantity">
-              <label>Quantity:</label>
+              <label>Spaces:</label>
               <div class="quantity-controls">
                 <button @click="updateQuantity(item.id, item.quantity - 1)" class="quantity-btn">-</button>
-                <input 
-                  v-model.number="item.quantity" 
-                  @change="updateQuantity(item.id, item.quantity)"
-                  type="number" 
-                  min="1" 
-                  class="quantity-input"
-                />
+                <span class="quantity-display">{{ item.quantity }}</span>
                 <button @click="updateQuantity(item.id, item.quantity + 1)" class="quantity-btn">+</button>
               </div>
             </div>
 
             <div class="item-price">
-              <span class="unit-price">£{{ item.price }}</span>
-              <span class="total-price">£{{ (item.price * item.quantity).toFixed(2) }}</span>
+              <span class="unit-price">£{{ item.price }} each</span>
+              <span class="total-price">£{{ item.price * item.quantity }}</span>
             </div>
 
             <div class="item-actions">
@@ -62,50 +50,23 @@
             <h3>Order Summary</h3>
             
             <div class="summary-line">
-              <span>Subtotal ({{ totalItems }} items):</span>
-              <span>£{{ subtotal.toFixed(2) }}</span>
-            </div>
-            
-            <div class="summary-line">
-              <span>Processing Fee:</span>
-              <span>£{{ processingFee.toFixed(2) }}</span>
+              <span>Subtotal ({{ totalItems }} spaces):</span>
+              <span>£{{ subtotal }}</span>
             </div>
             
             <div class="summary-line total">
               <span>Total:</span>
-              <span>£{{ total.toFixed(2) }}</span>
+              <span>£{{ subtotal }}</span>
             </div>
 
             <div class="summary-actions">
-              <router-link to="/classes" class="btn btn-outline">
+              <router-link to="/lessons" class="btn btn-outline">
                 Continue Shopping
               </router-link>
               <router-link to="/checkout" class="btn btn-primary btn-large">
                 Proceed to Checkout
               </router-link>
             </div>
-
-            <div class="payment-methods">
-              <p>We accept:</p>
-              <div class="payment-icons">
-                <span class="payment-icon">💳</span>
-                <span class="payment-icon">🏦</span>
-                <span class="payment-icon">📱</span>
-                <span class="payment-icon">💰</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="cart-benefits">
-            <h4>Why Choose Us?</h4>
-            <ul>
-              <li>✅ Expert instructors with proven track records</li>
-              <li>✅ Small class sizes for personalized attention</li>
-              <li>✅ Flexible scheduling options</li>
-              <li>✅ Money-back guarantee if not satisfied</li>
-              <li>✅ Free materials and supplies included</li>
-              <li>✅ Progress reports for parents</li>
-            </ul>
           </div>
         </div>
       </div>
@@ -114,9 +75,9 @@
         <div class="empty-cart-content">
           <div class="empty-cart-icon">🛒</div>
           <h3>Your cart is empty</h3>
-          <p>Discover amazing classes and activities for your child</p>
-          <router-link to="/classes" class="btn btn-primary btn-large">
-            Browse Classes
+          <p>Browse our lessons and book your spot</p>
+          <router-link to="/lessons" class="btn btn-primary btn-large">
+            Browse Lessons
           </router-link>
         </div>
       </div>
@@ -128,13 +89,17 @@
 import { computed } from 'vue'
 import { useStore } from '../stores/store'
 
+const API_URL = import.meta.env.VITE_API_URL || 'https://tundeh-backend.onrender.com'
+
 const store = useStore()
 
-const cart = computed(() => store.cart)
+const cart = computed(() => store.state.cart)
 const subtotal = computed(() => store.getCartTotal())
-const processingFee = computed(() => subtotal.value * 0.03) // 3% processing fee
-const total = computed(() => subtotal.value + processingFee.value)
-const totalItems = computed(() => cart.value.reduce((sum, item) => sum + item.quantity, 0))
+const totalItems = computed(() => store.getCartCount())
+
+const getImageUrl = (imageName) => {
+  return `${API_URL}/images/${imageName}`
+}
 
 const updateQuantity = (itemId, newQuantity) => {
   store.updateCartQuantity(itemId, newQuantity)
