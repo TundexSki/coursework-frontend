@@ -3,40 +3,27 @@
     <div class="container">
       <div class="footer-content">
         <div class="footer-section">
-          <h3>AfterSchool Hub</h3>
-          <p>Connecting students with amazing after-school activities and classes.</p>
+          <h3>After-School Lessons</h3>
+          <p>Enriching education beyond the classroom.</p>
         </div>
         
         <div class="footer-section">
           <h4>Quick Links</h4>
           <ul>
             <li><router-link to="/">Home</router-link></li>
-            <li><router-link to="/classes">Classes</router-link></li>
-            <li><router-link to="/login">Login</router-link></li>
-            <li><router-link to="/register">Register</router-link></li>
+            <li><router-link to="/lessons">Lessons</router-link></li>
+            <li><router-link to="/cart">Cart</router-link></li>
           </ul>
         </div>
         
         <div class="footer-section">
-          <h4>Support</h4>
-          <ul>
-            <li><a href="#">Help Center</a></li>
-            <li><a href="#">Contact Us</a></li>
-            <li><a href="#">Privacy Policy</a></li>
-            <li><a href="#">Terms of Service</a></li>
-          </ul>
-        </div>
-        
-        <div class="footer-section">
-          <h4>Contact Info</h4>
-          <p>📧 info@afterschoolhub.com</p>
-          <p>📞 (555) 123-4567</p>
-          <p>📍 123 Education St, Learning City</p>
+          <h4>Contact</h4>
+          <p>CST3144 Coursework Project</p>
         </div>
       </div>
       
       <div class="footer-bottom">
-        <p>&copy; 2024 AfterSchool Hub. All rights reserved.</p>
+        <p>&copy; 2024 After-School Lessons. All rights reserved.</p>
       </div>
     </div>
   </footer>
