@@ -3,107 +3,68 @@
     <!-- Hero Section -->
     <section class="hero">
       <div class="hero-content">
-        <h1>Discover Amazing After-School Activities</h1>
-        <p>Enroll your child in enriching classes that spark creativity, build skills, and create lasting friendships.</p>
+        <h1>After-School Lessons Hub</h1>
+        <p>Enriching after-school programs in Science, Arts, Music, and more. Book your spot today!</p>
         <div class="hero-actions">
-          <router-link to="/classes" class="btn btn-primary btn-large">Browse Classes</router-link>
-          <router-link to="/register" class="btn btn-outline btn-large">Get Started</router-link>
+          <router-link to="/lessons" class="btn btn-primary btn-large">Browse Lessons</router-link>
         </div>
-      </div>
-      <div class="hero-image">
-        <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=400&fit=crop" alt="Kids learning together" />
       </div>
     </section>
 
-    <!-- Featured Classes -->
-    <section class="featured-classes">
+    <!-- Featured Lessons -->
+    <section class="featured-lessons">
       <div class="container">
-        <h2>Featured Classes</h2>
-        <div class="classes-grid">
+        <h2>Featured Lessons</h2>
+        
+        <div v-if="loading" class="loading">Loading lessons...</div>
+        
+        <div v-else class="lessons-grid">
           <div 
-            v-for="classItem in featuredClasses" 
-            :key="classItem.id"
-            class="class-card"
+            v-for="lesson in featuredLessons" 
+            :key="lesson.id"
+            class="lesson-card"
           >
-            <div class="class-image">
-              <img :src="classItem.image" :alt="classItem.title" />
-              <div class="class-category">{{ classItem.category }}</div>
+            <div class="lesson-image">
+              <img :src="getImageUrl(lesson.image)" :alt="lesson.subject" />
+              <div class="spaces-badge">{{ lesson.spaces }} spaces</div>
             </div>
-            <div class="class-content">
-              <h3>{{ classItem.title }}</h3>
-              <p class="instructor">by {{ classItem.instructor }}</p>
-              <p class="description">{{ classItem.description }}</p>
-              <div class="class-meta">
-                <span class="age-group">Ages {{ classItem.ageGroup }}</span>
-                <span class="duration">{{ classItem.duration }}</span>
-              </div>
-              <div class="class-footer">
-                <span class="price">£{{ classItem.price }}</span>
-                <router-link :to="`/class/${classItem.id}`" class="btn btn-primary">Learn More</router-link>
+            <div class="lesson-content">
+              <h3>{{ lesson.subject }}</h3>
+              <p class="location">{{ lesson.location }}</p>
+              <p class="description">{{ lesson.description }}</p>
+              <div class="lesson-footer">
+                <span class="price">£{{ lesson.price }}</span>
+                <router-link :to="`/lesson/${lesson.id}`" class="btn btn-primary">View Details</router-link>
               </div>
             </div>
           </div>
         </div>
+        
         <div class="text-center">
-          <router-link to="/classes" class="btn btn-outline">View All Classes</router-link>
+          <router-link to="/lessons" class="btn btn-outline">View All Lessons</router-link>
         </div>
       </div>
     </section>
 
-    <!-- Why Choose Us -->
-    <section class="why-choose-us">
+    <!-- Features Section -->
+    <section class="features">
       <div class="container">
-        <h2>Why Choose AfterSchool Hub?</h2>
+        <h2>Why Choose Us?</h2>
         <div class="features-grid">
           <div class="feature">
+            <div class="feature-icon">📚</div>
+            <h3>Expert Teachers</h3>
+            <p>Learn from qualified professionals passionate about education.</p>
+          </div>
+          <div class="feature">
             <div class="feature-icon">🎯</div>
-            <h3>Expert Instructors</h3>
-            <p>Learn from qualified professionals who are passionate about teaching and inspiring young minds.</p>
+            <h3>Small Classes</h3>
+            <p>Limited spaces ensure personalized attention for every student.</p>
           </div>
           <div class="feature">
-            <div class="feature-icon">👥</div>
-            <h3>Small Class Sizes</h3>
-            <p>Personalized attention with small class sizes ensuring every child gets the support they need.</p>
-          </div>
-          <div class="feature">
-            <div class="feature-icon">🏆</div>
-            <h3>Proven Results</h3>
-            <p>Our programs have helped thousands of students develop new skills and build confidence.</p>
-          </div>
-          <div class="feature">
-            <div class="feature-icon">💡</div>
-            <h3>Diverse Programs</h3>
-            <p>From STEM to arts, sports to music - we offer a wide range of activities for every interest.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Testimonials -->
-    <section class="testimonials">
-      <div class="container">
-        <h2>What Parents Say</h2>
-        <div class="testimonials-grid">
-          <div class="testimonial">
-            <p>"My daughter absolutely loves the robotics class! She's learned so much and made great friends."</p>
-            <div class="testimonial-author">
-              <strong>Sarah M.</strong>
-              <span>Parent of Emma, age 9</span>
-            </div>
-          </div>
-          <div class="testimonial">
-            <p>"The instructors are amazing and really care about each child's progress. Highly recommended!"</p>
-            <div class="testimonial-author">
-              <strong>Michael R.</strong>
-              <span>Parent of Jake, age 11</span>
-            </div>
-          </div>
-          <div class="testimonial">
-            <p>"Great variety of classes and flexible scheduling. Perfect for our busy family."</p>
-            <div class="testimonial-author">
-              <strong>Lisa K.</strong>
-              <span>Parent of twins, ages 7 & 8</span>
-            </div>
+            <div class="feature-icon">🌟</div>
+            <h3>Diverse Subjects</h3>
+            <p>From Science to Arts, find the perfect lesson for your interests.</p>
           </div>
         </div>
       </div>
@@ -112,14 +73,28 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useStore } from '../stores/store'
+
+const API_URL = import.meta.env.VITE_API_URL || 'https://tundeh-backend.onrender.com'
 
 const store = useStore()
 
-const featuredClasses = computed(() => {
-  return store.classes.slice(0, 3)
+onMounted(() => {
+  if (store.state.lessons.length === 0) {
+    store.fetchLessons()
+  }
 })
+
+const loading = computed(() => store.state.loading)
+
+const featuredLessons = computed(() => {
+  return store.state.lessons.slice(0, 3)
+})
+
+const getImageUrl = (imageName) => {
+  return `${API_URL}/images/${imageName}`
+}
 </script>
 
 <style scoped>
@@ -131,25 +106,21 @@ const featuredClasses = computed(() => {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   padding: 4rem 0;
+  text-align: center;
+  min-height: 50vh;
   display: flex;
   align-items: center;
-  min-height: 70vh;
 }
 
 .hero-content {
-  max-width: 1200px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 0 20px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  align-items: center;
 }
 
 .hero-content h1 {
   font-size: 3rem;
   margin-bottom: 1rem;
-  line-height: 1.2;
 }
 
 .hero-content p {
@@ -161,28 +132,17 @@ const featuredClasses = computed(() => {
 .hero-actions {
   display: flex;
   gap: 1rem;
+  justify-content: center;
 }
 
-.hero-image img {
-  width: 100%;
-  border-radius: 10px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-}
-
-.featured-classes {
+.featured-lessons {
   padding: 4rem 0;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: #f8f9fa;
 }
 
-.why-choose-us {
+.features {
   padding: 4rem 0;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-}
-
-.testimonials {
-  padding: 4rem 0;
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   color: white;
 }
 
@@ -192,102 +152,95 @@ const featuredClasses = computed(() => {
   padding: 0 20px;
 }
 
-.featured-classes h2,
-.why-choose-us h2,
-.testimonials h2 {
+.featured-lessons h2,
+.features h2 {
   text-align: center;
-  margin-bottom: 3rem;
-  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  font-size: 2rem;
   color: #2c3e50;
 }
 
-.why-choose-us h2,
-.testimonials h2 {
+.features h2 {
   color: white;
 }
 
-.classes-grid {
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #7f8c8d;
+}
+
+.lessons-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
-  margin-bottom: 3rem;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
-.class-card {
+.lesson-card {
   background: white;
-  border-radius: 15px;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.class-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+.lesson-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
-.class-image {
+.lesson-image {
   position: relative;
-  height: 200px;
-  overflow: hidden;
+  height: 180px;
+  background: #e9ecef;
 }
 
-.class-image img {
+.lesson-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
 }
 
-.class-card:hover .class-image img {
-  transform: scale(1.05);
-}
-
-.class-category {
+.spaces-badge {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: #3498db;
+  top: 10px;
+  right: 10px;
+  background: #27ae60;
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 0.85rem;
 }
 
-.class-content {
+.lesson-content {
   padding: 1.5rem;
 }
 
-.class-content h3 {
+.lesson-content h3 {
   margin-bottom: 0.5rem;
   color: #2c3e50;
 }
 
-.instructor {
-  color: #7f8c8d;
-  margin-bottom: 1rem;
+.location {
+  color: #3498db;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
 }
 
 .description {
-  color: #5a6c7d;
-  margin-bottom: 1rem;
-  line-height: 1.6;
-}
-
-.class-meta {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
   color: #7f8c8d;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  font-size: 0.9rem;
 }
 
-.class-footer {
+.lesson-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
 }
 
 .price {
@@ -304,54 +257,22 @@ const featuredClasses = computed(() => {
 
 .feature {
   text-align: center;
-  padding: 2rem;
+  padding: 1.5rem;
 }
 
 .feature-icon {
-  font-size: 3rem;
+  font-size: 2.5rem;
   margin-bottom: 1rem;
 }
 
 .feature h3 {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   color: white;
 }
 
 .feature p {
   color: rgba(255,255,255,0.9);
-  line-height: 1.6;
-}
-
-
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-}
-
-.testimonial {
-  background: rgba(255,255,255,0.1);
-  padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.2);
-}
-
-.testimonial p {
-  font-style: italic;
-  margin-bottom: 1rem;
-  color: rgba(255,255,255,0.9);
-  line-height: 1.6;
-}
-
-.testimonial-author strong {
-  color: white;
-}
-
-.testimonial-author span {
-  color: rgba(255,255,255,0.8);
-  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .btn {
@@ -395,20 +316,11 @@ const featuredClasses = computed(() => {
 }
 
 @media (max-width: 768px) {
-  .hero-content {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
-  
   .hero-content h1 {
     font-size: 2rem;
   }
   
-  .hero-actions {
-    justify-content: center;
-  }
-  
-  .classes-grid {
+  .lessons-grid {
     grid-template-columns: 1fr;
   }
 }
