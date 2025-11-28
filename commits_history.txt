@@ -1,3 +1,4 @@
+3dd2a0c - docs: update commits_history.txt (2025-11-28 14:56:17 +0100)
 10bd238 - build: add deploy script for GitHub Pages (2025-11-28 14:55:32 +0100)
 41f6ce3 - docs: add commits_history.txt (2025-11-28 14:53:49 +0100)
 e223aa9 - chore: add .env.example for environment configuration (2025-11-28 14:53:31 +0100)
