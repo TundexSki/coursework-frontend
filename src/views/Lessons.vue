@@ -244,7 +244,7 @@ const handleAddToCart = (lesson) => {
 
 .lessons-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.5rem;
 }
 
@@ -265,12 +265,13 @@ const handleAddToCart = (lesson) => {
   position: relative;
   height: 180px;
   background: #e9ecef;
+  overflow: hidden;
 }
 
 .lesson-image img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .spaces-badge {
@@ -367,13 +368,48 @@ const handleAddToCart = (lesson) => {
   color: white;
 }
 
+@media (max-width: 992px) {
+  .lessons-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
   .controls-section {
     flex-direction: column;
   }
   
+  .page-header h1 {
+    font-size: 1.8rem;
+  }
+  
   .lessons-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .lesson-footer {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  .actions {
+    width: 100%;
+  }
+  
+  .actions .btn {
+    flex: 1;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 15px;
+  }
+  
+  .lesson-content {
+    padding: 1rem;
   }
 }
 </style>

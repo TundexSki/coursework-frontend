@@ -109,12 +109,13 @@ const handleAddToCart = () => {
 .lesson-image {
   height: 300px;
   background: #e9ecef;
+  overflow: hidden;
 }
 
 .lesson-image img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .lesson-info {
@@ -222,12 +223,42 @@ const handleAddToCart = () => {
 }
 
 @media (max-width: 768px) {
+  .lesson-image {
+    height: 220px;
+  }
+  
+  .lesson-info {
+    padding: 1.5rem;
+  }
+  
   .lesson-info h1 {
     font-size: 1.5rem;
   }
   
   .price {
     font-size: 2rem;
+  }
+  
+  .description {
+    font-size: 1rem;
+  }
+  
+  .btn-large {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 15px;
+  }
+  
+  .lesson-image {
+    height: 180px;
+  }
+  
+  .lesson-info {
+    padding: 1rem;
   }
 }
 </style>

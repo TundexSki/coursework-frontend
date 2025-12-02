@@ -157,10 +157,18 @@ const cartCount = computed(() => store.getCartCount())
 }
 
 @media (max-width: 768px) {
+  .container {
+    padding: 0 15px;
+  }
+  
   .header-content {
     flex-wrap: wrap;
     height: auto;
     padding: 1rem 0;
+  }
+  
+  .logo h1 {
+    font-size: 1.4rem;
   }
   
   .main-nav {
@@ -168,10 +176,21 @@ const cartCount = computed(() => store.getCartCount())
     width: 100%;
     justify-content: center;
     margin-top: 1rem;
+    gap: 1.5rem;
   }
   
   .header-actions {
     margin-left: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-nav {
+    gap: 1rem;
+  }
+  
+  .nav-link {
+    font-size: 0.9rem;
   }
 }
 </style>

@@ -359,4 +359,41 @@ const placeOrder = async () => {
   color: #7f8c8d;
   margin-bottom: 1rem;
 }
+
+@media (max-width: 768px) {
+  .page-header h1 {
+    font-size: 1.6rem;
+  }
+  
+  .checkout-content {
+    padding: 1.5rem;
+  }
+  
+  .checkout-actions {
+    flex-direction: column;
+  }
+  
+  .checkout-actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .success-message {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 15px;
+  }
+  
+  .checkout-content {
+    padding: 1rem;
+  }
+  
+  .order-summary {
+    padding: 1rem;
+  }
+}
 </style>

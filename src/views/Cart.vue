@@ -162,17 +162,21 @@ const removeFromCart = (itemId) => {
 }
 
 .item-image {
+  position: relative;
   width: 120px;
   height: 120px;
   border-radius: 8px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .item-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
 }
 
 .cart-item:hover .item-image img {
@@ -455,9 +459,26 @@ const removeFromCart = (itemId) => {
   font-size: 1.1rem;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .cart-content {
     grid-template-columns: 1fr;
+  }
+  
+  .cart-item {
+    grid-template-columns: 80px 1fr auto auto auto;
+    gap: 1rem;
+    padding: 1.5rem;
+  }
+  
+  .item-image {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header h1 {
+    font-size: 1.8rem;
   }
   
   .cart-item {
@@ -468,7 +489,7 @@ const removeFromCart = (itemId) => {
   
   .item-image {
     width: 100%;
-    height: 200px;
+    height: 180px;
     margin: 0 auto;
   }
   
@@ -482,6 +503,24 @@ const removeFromCart = (itemId) => {
   
   .summary-actions {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 15px;
+  }
+  
+  .cart-item {
+    padding: 1rem;
+  }
+  
+  .item-image {
+    height: 150px;
+  }
+  
+  .summary-card {
+    padding: 1.5rem;
   }
 }
 </style>

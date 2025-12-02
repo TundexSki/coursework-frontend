@@ -172,7 +172,7 @@ const getImageUrl = (imageName) => {
 
 .lessons-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 1.5rem;
   margin-bottom: 2rem;
 }
@@ -194,12 +194,13 @@ const getImageUrl = (imageName) => {
   position: relative;
   height: 180px;
   background: #e9ecef;
+  overflow: hidden;
 }
 
 .lesson-image img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .spaces-badge {
@@ -315,13 +316,66 @@ const getImageUrl = (imageName) => {
   text-align: center;
 }
 
+@media (max-width: 992px) {
+  .hero-content h1 {
+    font-size: 2.5rem;
+  }
+  
+  .lessons-grid {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
+  .hero {
+    padding: 3rem 0;
+    min-height: auto;
+  }
+  
   .hero-content h1 {
     font-size: 2rem;
   }
   
+  .hero-content p {
+    font-size: 1rem;
+  }
+  
   .lessons-grid {
     grid-template-columns: 1fr;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .featured-lessons h2,
+  .features h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 15px;
+  }
+  
+  .hero-content {
+    padding: 0 15px;
+  }
+  
+  .lesson-content {
+    padding: 1rem;
+  }
+  
+  .lesson-footer {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  
+  .lesson-footer .btn {
+    width: 100%;
+    text-align: center;
   }
 }
 </style>
